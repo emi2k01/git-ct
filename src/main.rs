@@ -44,8 +44,13 @@ fn main() -> anyhow::Result<()> {
         }
         vars = app.vars;
     } else {
-        let template_key = Select::new("Choose a template:", templates.keys().collect()).prompt()?;
-        if let Some(t) = templates.get(template_key) {
+        let labels = templates.iter().map(|t| &t.1.label).collect();
+        let selected_label = Select::new("Choose a template:", labels).prompt()?;
+        let selected_template = templates
+            .iter()
+            .find(|t| t.1.label == *selected_label)
+            .map(|t| t.1);
+        if let Some(t) = selected_template {
             template = t;
         } else {
             print_error("template does not exist");
@@ -111,6 +116,7 @@ fn main() -> anyhow::Result<()> {
 
 fn read_templates_file() -> anyhow::Result<HashMap<String, Template>> {
     let mut current_path = PathBuf::from("./").canonicalize().unwrap();
+    println!("{}", current_path.display());
     let mut templates_file = None;
     while current_path.components().count() > 1 {
         let file = std::fs::read_to_string(current_path.join("commit-templates.toml"));

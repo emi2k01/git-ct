@@ -1,0 +1,27 @@
+{
+  "name": "git-ct",
+  "version": "0.0.6",
+  "description": "Git commit templates",
+  "main": "binary.js",
+  "bin": {
+    "git-ct": "./run.js"
+  },
+  "scripts": {
+    "postinstall": "node ./install.js",
+    "preuninstall": "node ./uninstall.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emi2k01/git-ct"
+  },
+  "author": "Emilio González",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emi2k01/git-ct/issues"
+  },
+  "homepage": "https://github.com/emi2k01/git-ct#readme",
+  "dependencies": {
+    "@emi2k01/binary-install": "^1.0.4",
+    "console.table": "^0.10.0"
+  }
+}
