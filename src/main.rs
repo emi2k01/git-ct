@@ -12,6 +12,7 @@ struct Template {
     label: String,
     #[allow(unused)]
     description: String,
+    vars: Vec<String>,
     branch_pattern: String,
     title: String,
     body: String,
@@ -39,17 +40,22 @@ fn main() -> anyhow::Result<()> {
     let mut title = template.title.clone();
     let mut body = template.body.clone();
     let mut branch_pattern = template.branch_pattern.clone();
-    for var_pair in &app.vars {
-        let mut var_pair = var_pair.split('=');
-        let var = var_pair
-            .next()
-            .context("var must have the format `var=value`")?;
-        let value = var_pair
-            .next()
-            .context("var must have the format `var=value`")?;
-        title = title.replace(&format!("{{{{{var}}}}}"), value);
-        body = body.replace(&format!("{{{{{var}}}}}"), value);
-        branch_pattern = body.replace(&format!("{{{{{var}}}}}"), value);
+
+    for template_var in &template.vars {
+        for var_pair in &app.vars {
+            let mut var_pair = var_pair.split('=');
+            let var = var_pair
+                .next()
+                .context("var must have the format `var=value`")?;
+            let value = var_pair
+                .next()
+                .context("var must have the format `var=value`")?;
+            if var == template_var {
+                title = title.replace(&format!("{{{{{var}}}}}"), value);
+                body = body.replace(&format!("{{{{{var}}}}}"), value);
+                branch_pattern = branch_pattern.replace(&format!("{{{{{var}}}}}"), value);
+            }
+        }
     }
 
     let commit_msg = format!("{title}\n\n{body}");
@@ -74,7 +80,7 @@ fn main() -> anyhow::Result<()> {
     .unwrap();
 
     if !branch_regex.is_match(&branch) {
-        print_error(format!(
+        print_warning(format!(
             "branch name does not match pattern `{branch_pattern}`"
         ));
         std::process::exit(1)
@@ -90,6 +96,7 @@ fn read_templates_file() -> anyhow::Result<HashMap<String, Template>> {
         let file = std::fs::read_to_string(current_path.join("commit-templates.toml"));
         if let Ok(file) = file {
             templates_file = Some(file);
+            break;
         } else {
             current_path = current_path
                 .parent()

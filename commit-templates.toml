@@ -1,10 +1,11 @@
 [feat]
 label = "Feat 🎸"
 description = "A new feature"
+vars = ["title", "nn"]
 title = "feat: 🎸 {{title}}"
 branch_pattern = "^feature/GP-{{nn}}$"
 body = """
-## Breaking changes
+\\## Breaking changes
 
 Closes [GP-{{nn}}](https://connectnodes.atlassian.net/browse/GP-{{nn}})
 """
