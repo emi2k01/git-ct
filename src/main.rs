@@ -3,10 +3,11 @@ use std::{collections::HashMap, path::PathBuf};
 use anyhow::Context;
 use clap::Parser;
 use colorize::AnsiColor;
+use inquire::{Select, Text};
 use regex::Regex;
 use serde::Deserialize;
 
-#[derive(Deserialize)]
+#[derive(Default, Deserialize)]
 struct Template {
     #[allow(unused)]
     label: String,
@@ -20,6 +21,7 @@ struct Template {
 
 #[derive(Parser)]
 struct App {
+    #[clap(short)]
     template: String,
     /// Pass variables to template using the syntax `var=value`
     #[clap(short)]
@@ -27,14 +29,32 @@ struct App {
 }
 
 fn main() -> anyhow::Result<()> {
-    let app = App::parse();
     let templates = read_templates_file()?;
 
-    let template = if let Some(template) = templates.get(&app.template) {
-        template
+    let app = App::try_parse();
+
+    let template;
+    let mut vars = vec![];
+    if let Ok(app) = app {
+        if let Some(t) = templates.get(&app.template) {
+            template = t;
+        } else {
+            print_error("template does not exist");
+            std::process::exit(1);
+        }
+        vars = app.vars;
     } else {
-        print_error(format!("{} does not exist", app.template));
-        std::process::exit(1);
+        let template_key = Select::new("Choose a template:", templates.keys().collect()).prompt()?;
+        if let Some(t) = templates.get(template_key) {
+            template = t;
+        } else {
+            print_error("template does not exist");
+            std::process::exit(1);
+        }
+        for var in &template.vars {
+            let value = Text::new(&format!("Value for `{var}`:")).prompt()?;
+            vars.push(format!("{var}={value}"));
+        }
     };
 
     let mut title = template.title.clone();
@@ -42,7 +62,7 @@ fn main() -> anyhow::Result<()> {
     let mut branch_pattern = template.branch_pattern.clone();
 
     for template_var in &template.vars {
-        for var_pair in &app.vars {
+        for var_pair in &vars {
             let mut var_pair = var_pair.split('=');
             let var = var_pair
                 .next()
