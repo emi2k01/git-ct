@@ -92,20 +92,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc17e449bc7854c50b943d113a98bc0e01dc6585d2c66eaa09ca645ebd8a7e62"
 
 [[package]]
-name = "commit-templates"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "clap",
- "colorize",
- "inquire",
- "regex",
- "serde",
- "temp-file",
- "toml",
-]
-
-[[package]]
 name = "crossterm"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,6 +114,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a6966607622438301997d3dac0d2f6e9a90c68bb6bc1785ea98456ab93c0507"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "git-ct"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "colorize",
+ "inquire",
+ "regex",
+ "serde",
+ "temp-file",
+ "toml",
 ]
 
 [[package]]
