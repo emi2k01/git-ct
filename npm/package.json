@@ -1,6 +1,6 @@
 {
   "name": "git-ct",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Git commit templates",
   "main": "binary.js",
   "bin": {

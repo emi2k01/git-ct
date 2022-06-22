@@ -2,7 +2,7 @@ const { Binary } = require("@emi2k01/binary-install");
 const os = require("os");
 const cTable = require("console.table");
 
-const VERSION = "0.0.5";
+const VERSION = "0.0.12";
 
 const error = (msg) => {
   console.error(msg);
@@ -28,6 +28,12 @@ const supportedPlatforms = [
     TYPE: "Darwin",
     ARCHITECTURE: "x64",
     RUST_TARGET: "x86_64-apple-darwin",
+    BINARY_NAME: "git-ct",
+  },
+  {
+    TYPE: "Darwin",
+    ARCHITECTURE: "arm64",
+    RUST_TARGET: "aarch64-apple-darwin",
     BINARY_NAME: "git-ct",
   },
 ];
@@ -56,7 +62,7 @@ const getBinary = () => {
   const platformMetadata = getPlatformMetadata();
   // the url for this binary is constructed from values in `package.json`
   // https://github.com/EverlastingBugstopper/binary-install/releases/download/v1.0.0/binary-install-example-v1.0.0-x86_64-apple-darwin.tar.gz
-  const url = `${repository.url}/releases/download/v${VERSION}/${name}_v${VERSION}_${platformMetadata.RUST_TARGET}.tar.gz`;
+  const url = `${repository.url}/releases/download/v${VERSION}/${name}-${platformMetadata.RUST_TARGET}.tar.gz`;
   return new Binary(platformMetadata.BINARY_NAME, url);
 };
 
