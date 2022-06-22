@@ -118,7 +118,7 @@ dependencies = [
 
 [[package]]
 name = "git-ct"
-version = "0.1.0"
+version = "0.0.15"
 dependencies = [
  "anyhow",
  "clap",

@@ -2,7 +2,7 @@ const { Binary } = require("@emi2k01/binary-install");
 const os = require("os");
 const cTable = require("console.table");
 
-const VERSION = "0.0.12";
+const VERSION = "0.0.15";
 
 const error = (msg) => {
   console.error(msg);
