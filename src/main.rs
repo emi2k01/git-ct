@@ -90,9 +90,11 @@ fn main() -> anyhow::Result<()> {
             "commit",
             "-t",
             commit_template.path().as_os_str().to_str().unwrap(),
+            "--allow-empty-message",
         ])
-        .output()
-        .context("failed to commit")?;
+        .spawn()
+        .context("failed to commit")?
+        .wait()?;
 
     let branch_regex = Regex::new(&branch_pattern)?;
     let branch = String::from_utf8(
