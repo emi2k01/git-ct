@@ -87,6 +87,8 @@ fn main() -> anyhow::Result<()> {
     let commit_template = temp_file::with_contents(commit_msg.as_bytes());
     std::process::Command::new("git")
         .args(&[
+            "-c",
+            "core.commentChar=;",
             "commit",
             "-t",
             commit_template.path().as_os_str().to_str().unwrap(),
