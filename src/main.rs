@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+
 use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Context;
@@ -28,8 +31,20 @@ struct App {
     vars: Vec<String>,
 }
 
+static DEFAULT_TEMPLATES: &str = include_str!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/commit-templates.default.toml"
+));
+
 fn main() -> anyhow::Result<()> {
-    let templates = read_templates_file()?;
+    env_logger::init();
+
+    let templates = read_templates_file()
+        .context("failed to read templates file")
+        .unwrap_or_else(|e| {
+            warn!("Using default template: {e:#}");
+            toml::from_str(DEFAULT_TEMPLATES).unwrap()
+        });
 
     let app = App::try_parse();
 
@@ -87,8 +102,6 @@ fn main() -> anyhow::Result<()> {
     let commit_template = temp_file::with_contents(commit_msg.as_bytes());
     std::process::Command::new("git")
         .args(&[
-            "-c",
-            "core.commentChar=;",
             "commit",
             "-t",
             commit_template.path().as_os_str().to_str().unwrap(),
@@ -120,7 +133,6 @@ fn main() -> anyhow::Result<()> {
 
 fn read_templates_file() -> anyhow::Result<HashMap<String, Template>> {
     let mut current_path = PathBuf::from("./").canonicalize().unwrap();
-    println!("{}", current_path.display());
     let mut templates_file = None;
     while current_path.components().count() > 1 {
         let file = std::fs::read_to_string(current_path.join("commit-templates.toml"));
@@ -130,7 +142,7 @@ fn read_templates_file() -> anyhow::Result<HashMap<String, Template>> {
         } else {
             current_path = current_path
                 .parent()
-                .context("failed to find commit-templates.toml")?
+                .context("failed to find `commit-templates.toml`")?
                 .to_path_buf();
         }
     }
@@ -138,7 +150,7 @@ fn read_templates_file() -> anyhow::Result<HashMap<String, Template>> {
     let templates_file = if let Some(templates_file) = templates_file {
         templates_file
     } else {
-        anyhow::bail!("failed to find commit-templates.toml")
+        anyhow::bail!("failed to find `commit-templates.toml`")
     };
 
     toml::from_str(&templates_file).context("failed to deserialize templates file")

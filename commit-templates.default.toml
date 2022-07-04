@@ -1,0 +1,88 @@
+[chore]
+label = "Chore 🤖"
+description = "Build process or auxiliary tool changes"
+vars = ["title"]
+title = "chore 🤖: {{title}}"
+branch_pattern = "^chore/.*"
+body = ""
+
+[ci]
+label = "CI 🤖"
+description = "CI related changes"
+vars = ["title"]
+title = "ci 🤖: {{title}}"
+branch_pattern = "^ci/.*"
+body = ""
+
+[docs]
+label = "Docs ✏️"
+description = "Documentation only changes"
+vars = ["title"]
+title = "docs ✏️: {{title}}"
+branch_pattern = "^docs/.*"
+body = ""
+
+[feat]
+label = "Feat 🎸"
+description = "A new feature"
+vars = ["title", "ticket"]
+title = "feat 🎸: {{title}}"
+branch_pattern = "^feature/{{ticket}}$"
+body = """
+**Closes #{{ticket}}**
+"""
+
+[fix]
+label = "Fix 🐞"
+description = "A bug fix"
+vars = ["title", "ticket"]
+title = "fix 🐞: {{title}}"
+branch_pattern = "^fix/GP-{{ticket}}$"
+body = """
+**Closes #{{ticket}}**
+"""
+
+[perf]
+label = "Perf ⚡️"
+description = "A code change that improves performance"
+vars = ["title"]
+title = "perf ⚡️: {{title}}"
+branch_pattern = "^perf/.*"
+body = ""
+
+[refactor]
+label = "Refactor 💡"
+description = "A code change that neither fixes a bug or adds a feature"
+vars = ["title"]
+title = "refactor 💡: {{title}}"
+branch_pattern = "^refactor/.*"
+body = ""
+
+[release]
+label = "Release 🏹"
+description = "Create a release commit"
+vars = ["title", "version"]
+title = "release 🏹: {{title}}"
+branch_pattern = "^release/.*"
+body = """
+Version: {{version}}
+
+* Changelog *
+- ...
+"""
+
+[style]
+label = "Style 💄"
+description = "Markup, white-space, formatting, missing semi-colons..."
+vars = ["title"]
+title = "style 💄: {{title}}"
+branch_pattern = "^style/.*"
+body = ""
+
+[test]
+label = "Test 💍"
+description = "Adding missing tests"
+vars = ["title"]
+title = "test 💍: {{title}}"
+branch_pattern = "^test/.*"
+body = ""

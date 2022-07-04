@@ -9,7 +9,7 @@ const error = (msg) => {
   process.exit(1);
 };
 
-const { version, name, repository } = require("./package.json");
+const { version, name, nativeModule } = require("./package.json");
 
 const supportedPlatforms = [
   {
@@ -62,7 +62,7 @@ const getBinary = () => {
   const platformMetadata = getPlatformMetadata();
   // the url for this binary is constructed from values in `package.json`
   // https://github.com/EverlastingBugstopper/binary-install/releases/download/v1.0.0/binary-install-example-v1.0.0-x86_64-apple-darwin.tar.gz
-  const url = `${repository.url}/releases/download/v${VERSION}/${name}-${platformMetadata.RUST_TARGET}.tar.gz`;
+  const url = `${nativeModule.url}/releases/download/v${VERSION}/${name}-${platformMetadata.RUST_TARGET}.tar.gz`;
   return new Binary(platformMetadata.BINARY_NAME, url);
 };
 
