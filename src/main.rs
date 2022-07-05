@@ -9,8 +9,9 @@ use colorize::AnsiColor;
 use inquire::{Select, Text};
 use regex::Regex;
 use serde::Deserialize;
+use unicode_segmentation::UnicodeSegmentation;
 
-#[derive(Default, Deserialize)]
+#[derive(Clone, Default, Deserialize)]
 struct Template {
     #[allow(unused)]
     label: String,
@@ -52,19 +53,36 @@ fn main() -> anyhow::Result<()> {
     let mut vars = vec![];
     if let Ok(app) = app {
         if let Some(t) = templates.get(&app.template) {
-            template = t;
+            template = t.clone();
         } else {
             print_error("template does not exist");
             std::process::exit(1);
         }
         vars = app.vars;
     } else {
-        let labels = templates.iter().map(|t| &t.1.label).collect();
-        let selected_label = Select::new("Choose a template:", labels).prompt()?;
-        let selected_template = templates
+        let templates = templates.into_values().collect::<Vec<_>>();
+        let max_label_len = templates
             .iter()
-            .find(|t| t.1.label == *selected_label)
-            .map(|t| t.1);
+            .map(|t| t.label.graphemes(true).count())
+            .max()
+            .unwrap_or(0);
+
+        let labels = templates
+            .iter()
+            .map(|t| {
+                let needed_padding = (max_label_len - t.label.graphemes(true).count()).max(0);
+                let mut padded_label = String::from(&t.label);
+                padded_label.extend(std::iter::repeat(" ").take(needed_padding));
+                format!(
+                    "{:w$} | {}",
+                    &padded_label,
+                    &t.description,
+                    w = max_label_len
+                )
+            })
+            .collect();
+        let selected_option = Select::new("Choose a template:", labels).raw_prompt()?;
+        let selected_template = templates.get(selected_option.index).cloned();
         if let Some(t) = selected_template {
             template = t;
         } else {

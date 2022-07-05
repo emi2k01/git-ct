@@ -43,7 +43,7 @@ body = """
 """
 
 [perf]
-label = "Perf ⚡️"
+label = "Perf ⚡"
 description = "A code change that improves performance"
 vars = ["title"]
 title = "perf ⚡️: {{title}}"
